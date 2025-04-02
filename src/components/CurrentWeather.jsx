@@ -2,7 +2,7 @@ import React, { useContext } from 'react';
 import { WeatherContext } from '../App';
 
 const CurrentWeather = () => {
-  const { weatherData, unit, toggleFavorite, favorites, toggleUnit } = useContext(WeatherContext);
+  const { loading,weatherData, unit, toggleFavorite, favorites, toggleUnit } = useContext(WeatherContext);
   
   if (!weatherData) return null;
   
@@ -59,9 +59,14 @@ const CurrentWeather = () => {
           <button 
             className="unit-toggle"
             onClick={toggleUnit}
+            disabled={loading}
             aria-label="Toggle temperature unit"
           >
-            Switch to {unit === 'metric' ? '°F' : '°C'}
+           {loading ? (
+      <span className="loader"></span> // Loader element
+    ) : (
+      `Switch to ${unit === 'metric' ? '°F' : '°C'}`
+    )}
           </button>
         </div>
         
