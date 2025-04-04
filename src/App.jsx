@@ -53,7 +53,7 @@ const App = () => {
     localStorage.setItem('favorites', JSON.stringify(favorites));
   }, [favorites]);
   console.log(import.meta.env.VITE_API_KEY, "jfjbfjgjdsvbhjdhbchjxchgnvb");
-  const fetchWeather = async (city,unitOverride = unit) => {
+  const fetchWeather = async (city, unitOverride = unit) => {
     setLoading(true);
     setError(null);
 
@@ -160,28 +160,28 @@ const App = () => {
       }}
     >
       <div className="app-container">
-        <header>
+        <header className='w-full flex'>
           <h1>Weather Dashboard</h1>
           <ThemeToggle />
         </header>
 
-        <main>
+        <main className='w-full flex' style={{ flexDirection: "column" }}>
           <SearchBar />
           {error && <div className="error-message">{error}</div>}
-          {loading && <div className="loading">Loading...</div>}
-
           <div className="content-container">
-            <div className="main-content">
+            {loading ? <div className="main-content">Loading...</div> : <div className="main-content">
               {weatherData && <CurrentWeather />}
               {forecast && <Forecast />}
-            </div>
+            </div>}
             <aside>
               <FavoriteCities />
             </aside>
           </div>
+
+
         </main>
 
-        <footer>
+        <footer className='w-full flex'>
           <p>Weather data provided by OpenWeatherMap</p>
         </footer>
       </div>
