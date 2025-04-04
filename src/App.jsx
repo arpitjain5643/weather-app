@@ -1,11 +1,11 @@
 // App.jsx - Main component
-import React, { useState, useEffect, createContext, useContext } from 'react';
-import SearchBar from './components/SearchBar';
-import CurrentWeather from './components/CurrentWeather';
-import Forecast from './components/Forecast';
-import ThemeToggle from './components/ThemeToggle';
-import FavoriteCities from './components/FavoriteCities';
-import './App.css';
+import React, { useState, useEffect, createContext, useContext } from "react";
+import SearchBar from "./components/SearchBar";
+import CurrentWeather from "./components/CurrentWeather";
+import Forecast from "./components/Forecast";
+import ThemeToggle from "./components/ThemeToggle";
+import FavoriteCities from "./components/FavoriteCities";
+import "./App.css";
 
 // Create Weather Context for state management
 export const WeatherContext = createContext();
@@ -17,20 +17,20 @@ const App = () => {
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
   const [darkMode, setDarkMode] = useState(false);
-  const [unit, setUnit] = useState('metric'); // 'metric' for Celsius, 'imperial' for Fahrenheit
+  const [unit, setUnit] = useState("metric"); // 'metric' for Celsius, 'imperial' for Fahrenheit
 
   // API key would typically be stored in environment variables
   const API_KEY = import.meta.env.VITE_API_KEY || "";
 
   useEffect(() => {
     // Load favorites from localStorage on component mount
-    const savedFavorites = localStorage.getItem('favorites');
+    const savedFavorites = localStorage.getItem("favorites");
     if (savedFavorites) {
       setFavorites(JSON.parse(savedFavorites));
     }
 
     // Load theme preference
-    const savedTheme = localStorage.getItem('darkMode');
+    const savedTheme = localStorage.getItem("darkMode");
     if (savedTheme) {
       setDarkMode(JSON.parse(savedTheme));
     }
@@ -39,20 +39,20 @@ const App = () => {
   useEffect(() => {
     // Apply dark mode to body
     if (darkMode) {
-      document.body.classList.add('dark-mode');
+      document.body.classList.add("dark-mode");
     } else {
-      document.body.classList.remove('dark-mode');
+      document.body.classList.remove("dark-mode");
     }
 
     // Save theme preference
-    localStorage.setItem('darkMode', JSON.stringify(darkMode));
+    localStorage.setItem("darkMode", JSON.stringify(darkMode));
   }, [darkMode]);
 
   useEffect(() => {
     // Save favorites to localStorage when they change
-    localStorage.setItem('favorites', JSON.stringify(favorites));
+    localStorage.setItem("favorites", JSON.stringify(favorites));
   }, [favorites]);
-  console.log(import.meta.env.VITE_API_KEY, "jfjbfjgjdsvbhjdhbchjxchgnvb");
+  // console.log(import.meta.env.VITE_API_KEY, "jfjbfjgjdsvbhjdhbchjxchgnvb");
   const fetchWeather = async (city, unitOverride = unit) => {
     setLoading(true);
     setError(null);
@@ -61,9 +61,10 @@ const App = () => {
       // Fetch current weather
       const weatherResponse = await fetch(
         `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${unitOverride}&appid=${API_KEY}`
-
       );
-      console.log(`https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${unitOverride}&appid=${API_KEY}`)
+      console.log(
+        `https://api.openweathermap.org/data/2.5/weather?q=${city}&units=${unitOverride}&appid=${API_KEY}`
+      );
       if (!weatherResponse.ok) {
         throw new Error(`City not found`);
       }
@@ -75,7 +76,9 @@ const App = () => {
       const forecastResponse = await fetch(
         `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=${unitOverride}&appid=${API_KEY}`
       );
-      console.log(`https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=${unitOverride}&appid=${API_KEY}`)
+      console.log(
+        `https://api.openweathermap.org/data/2.5/forecast?q=${city}&units=${unitOverride}&appid=${API_KEY}`
+      );
 
       if (!forecastResponse.ok) {
         throw new Error(`Forecast data not available`);
@@ -86,7 +89,6 @@ const App = () => {
       // Process forecast data to get one forecast per day
       const dailyForecasts = processForecastData(forecastData);
       setForecast(dailyForecasts);
-
     } catch (err) {
       setError(err.message);
     } finally {
@@ -98,7 +100,7 @@ const App = () => {
     // Group forecast by day and get daily values
     const dailyData = {};
 
-    data.list.forEach(item => {
+    data.list.forEach((item) => {
       const date = new Date(item.dt * 1000).toLocaleDateString();
 
       if (!dailyData[date]) {
@@ -106,7 +108,7 @@ const App = () => {
           date,
           temps: [],
           icon: item.weather[0].icon,
-          description: item.weather[0].description
+          description: item.weather[0].description,
         };
       }
 
@@ -114,16 +116,18 @@ const App = () => {
     });
 
     // Convert to array and calculate min/max temps
-    return Object.values(dailyData).map(day => ({
-      ...day,
-      maxTemp: Math.max(...day.temps),
-      minTemp: Math.min(...day.temps)
-    })).slice(0, 5); // Get only 5 days
+    return Object.values(dailyData)
+      .map((day) => ({
+        ...day,
+        maxTemp: Math.max(...day.temps),
+        minTemp: Math.min(...day.temps),
+      }))
+      .slice(0, 5); // Get only 5 days
   };
 
   const toggleFavorite = (city) => {
     if (favorites.includes(city)) {
-      setFavorites(favorites.filter(fav => fav !== city));
+      setFavorites(favorites.filter((fav) => fav !== city));
     } else {
       setFavorites([...favorites, city]);
     }
@@ -134,7 +138,7 @@ const App = () => {
   };
 
   const toggleUnit = () => {
-    const newUnit = unit === 'metric' ? 'imperial' : 'metric';
+    const newUnit = unit === "metric" ? "imperial" : "metric";
     setUnit(newUnit);
 
     // Refetch data with the new unit if we have a city
@@ -156,32 +160,37 @@ const App = () => {
         fetchWeather,
         toggleFavorite,
         toggleDarkMode,
-        toggleUnit
+        toggleUnit,
       }}
     >
       <div className="app-container">
-        <header className='w-full flex'>
+        <header className="w-full flex">
           <h1>Weather Dashboard</h1>
           <ThemeToggle />
         </header>
 
-        <main className='w-full flex' style={{ flexDirection: "column" }}>
+        <main
+          className="w-full flex"
+          style={{ flexDirection: "column", justifyContent: "start" }}
+        >
           <SearchBar />
           {error && <div className="error-message">{error}</div>}
           <div className="content-container">
-            {loading ? <div className="main-content">Loading...</div> : <div className="main-content">
-              {weatherData && <CurrentWeather />}
-              {forecast && <Forecast />}
-            </div>}
+            {loading ? (
+              <div className="main-content">Loading...</div>
+            ) : (
+              <div className="main-content">
+                {weatherData && <CurrentWeather />}
+                {forecast && <Forecast />}
+              </div>
+            )}
             <aside>
               <FavoriteCities />
             </aside>
           </div>
-
-
         </main>
 
-        <footer className='w-full flex'>
+        <footer className="w-full flex">
           <p>Weather data provided by OpenWeatherMap</p>
         </footer>
       </div>
