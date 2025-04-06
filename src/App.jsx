@@ -34,6 +34,41 @@ const App = () => {
     if (savedTheme) {
       setDarkMode(JSON.parse(savedTheme));
     }
+    if (navigator.geolocation) {
+      navigator.geolocation.getCurrentPosition(
+        async (position) => {
+          const { latitude, longitude } = position.coords;
+          try {
+            const weatherResponse = await fetch(
+              `https://api.openweathermap.org/data/2.5/weather?lat=${latitude}&lon=${longitude}&units=${unit}&appid=${API_KEY}`
+            );
+            if (!weatherResponse.ok) {
+              throw new Error("Unable to fetch weather for your location");
+            }
+            const weatherData = await weatherResponse.json();
+            setWeatherData(weatherData);
+  
+            const forecastResponse = await fetch(
+              `https://api.openweathermap.org/data/2.5/forecast?lat=${latitude}&lon=${longitude}&units=${unit}&appid=${API_KEY}`
+            );
+            if (!forecastResponse.ok) {
+              throw new Error("Unable to fetch forecast for your location");
+            }
+            const forecastData = await forecastResponse.json();
+            const dailyForecasts = processForecastData(forecastData);
+            setForecast(dailyForecasts);
+          } catch (err) {
+            setError(err.message);
+          }
+        },
+        (error) => {
+          console.error("Geolocation error:", error.message);
+          setError("Location permission denied. Please search for a city.");
+        }
+      );
+    } else {
+      setError("Geolocation is not supported by your browser.");
+    }
   }, []);
 
   useEffect(() => {
