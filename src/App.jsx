@@ -16,7 +16,7 @@ const App = () => {
   const [favorites, setFavorites] = useState([]);
   const [error, setError] = useState(null);
   const [loading, setLoading] = useState(false);
-  const [darkMode, setDarkMode] = useState(false);
+  const [darkMode, setDarkMode] = useState(true); // Default to dark mode
   const [unit, setUnit] = useState("metric"); // 'metric' for Celsius, 'imperial' for Fahrenheit
 
   // API key would typically be stored in environment variables
@@ -31,8 +31,10 @@ const App = () => {
 
     // Load theme preference
     const savedTheme = localStorage.getItem("darkMode");
-    if (savedTheme) {
+    if (savedTheme !== null) {
       setDarkMode(JSON.parse(savedTheme));
+    } else {
+      setDarkMode(true); // Default to dark mode if no preference saved
     }
     if (navigator.geolocation) {
       navigator.geolocation.getCurrentPosition(
