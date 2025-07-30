@@ -132,22 +132,23 @@ const App = () => {
   };
 
   const processForecastData = (data) => {
-    // Group forecast by day and get daily values
+    // Group forecast by day using ISO date string for mobile compatibility
     const dailyData = {};
 
     data.list.forEach((item) => {
-      const date = new Date(item.dt * 1000).toLocaleDateString();
+      // Always use UTC for grouping to avoid timezone issues
+      const dateObj = new Date(item.dt * 1000);
+      const dateKey = dateObj.toISOString().split("T")[0]; // 'YYYY-MM-DD'
 
-      if (!dailyData[date]) {
-        dailyData[date] = {
-          date,
+      if (!dailyData[dateKey]) {
+        dailyData[dateKey] = {
+          date: dateKey,
           temps: [],
           icon: item.weather[0].icon,
           description: item.weather[0].description,
         };
       }
-
-      dailyData[date].temps.push(item.main.temp);
+      dailyData[dateKey].temps.push(item.main.temp);
     });
 
     // Convert to array and calculate min/max temps
